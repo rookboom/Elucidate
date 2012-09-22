@@ -43,7 +43,7 @@ type CommentTagger(buffer:ITextBuffer) as m =
             let text =  snapshot.GetText()
             let tagSpans(regex:Regex)= 
                 let tagSpan(m:Match) = 
-                    let tag =  CommentTag(m.Groups.["xaml"].Value) :> ITag
+                    let tag =  CommentTag(m.Groups.["xaml"].Value)
                     let span = SnapshotSpan(snapshot, m.Index, m.Length)
                     TagSpan(span, tag)
                 regex.Matches(text).Cast<Match>()
