@@ -111,6 +111,13 @@
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="HtmlToXaml\HtmlToXaml.csproj">
+      <Name>HtmlToXaml</Name>
+      <Project>{db5aee1f-0452-4ceb-89e6-07f777b4dd3c}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
