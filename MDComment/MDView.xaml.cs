@@ -42,6 +42,13 @@ namespace Microsoft.MDComment
              
         }
 
+        IEnumerable<string> DumpException(Exception e)
+        {
+            if (e.InnerException != null)
+                yield return String.Concat(DumpException(e.InnerException));
+            yield return e.Message;
+                
+        }
         Task UpdateMarkdown()
         {
             return Task.Run(() => MDFormatter.format(sourceFile))
@@ -56,7 +63,7 @@ namespace Microsoft.MDComment
                     {
                         var msg = String.Format(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.01 Transitional//EN"" ""http://www.w3.org/TR/html4/loose.dtd"">
 <html><head><title>Error</title></head><body>{0}</body></html>",
-                            t.Exception.Message);
+                            String.Concat(DumpException(t.Exception)));
                         browser.NavigateToString(msg);
                    }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
