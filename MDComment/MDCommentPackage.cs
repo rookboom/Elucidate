@@ -32,6 +32,7 @@ namespace Microsoft.MDComment
     // This attribute registers a tool window exposed by this package.
     [ProvideToolWindow(typeof(MyToolWindow))]
     [Guid(GuidList.guidMDCommentPkgString)]
+    [ProvideBindingPath] 
     public sealed class MDCommentPackage : Package
     {
         /// <summary>

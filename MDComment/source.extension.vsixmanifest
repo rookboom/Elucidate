@@ -3,7 +3,10 @@
   <Metadata>
     <Identity Id="f547e7eb-fa9f-4284-90c9-fab2bd1fa0be" Version="1.0" Language="en-US" Publisher="Microsoft" />
     <DisplayName>Elucidate</DisplayName>
-    <Description>Alternative reading mode that renders markdown interspersed in code.</Description>
+    <Description xml:space="preserve">Alternative reading mode that renders markdown interspersed in code. Credits to Tomas Petricek's Literate Programming tools.
+http://tpetricek.github.io/FSharp.Formatting/literate.html</Description>
+    <MoreInfo>https://github.com/rookboom/Elucidate</MoreInfo>
+    <License>license.txt</License>
   </Metadata>
   <Installation InstalledByMsi="false">
     <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0]" />

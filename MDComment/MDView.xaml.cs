@@ -31,6 +31,7 @@ namespace Microsoft.MDComment
         Events events;
         DocumentEvents docEvents;
         string sourceFile;
+        MDFormatter formatter = new MDFormatter();
         public MDView()
         {
             InitializeComponent();
@@ -39,7 +40,6 @@ namespace Microsoft.MDComment
             docEvents = events.DocumentEvents;
             dte.Events.WindowEvents.WindowActivated += OnWindowActivated;
             docEvents.DocumentSaved += OnDocumentSaved;
-             
         }
 
         IEnumerable<string> DumpException(Exception e)
@@ -49,21 +49,31 @@ namespace Microsoft.MDComment
             yield return e.Message;
                 
         }
-        Task UpdateMarkdown()
+        string WrapMessageInHtml(string msg)
         {
-            return Task.Run(() => MDFormatter.format(sourceFile))
+            return String.Format(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.01 Transitional//EN"" ""http://www.w3.org/TR/html4/loose.dtd"">
+<html><head><title>Elucidate Error</title></head><body><b>Error:</b> {0}</body></html>", msg);
+        }
+
+        Task UpdateMarkdown(string sourceFile)
+        {
+            return formatter.Format(sourceFile)
                 .ContinueWith(t =>
                 {
                     if (t.Exception == null)
                     {
-                        var outputFile = t.Result;
-                        browser.Navigate(new Uri(String.Format("file:///{0}", outputFile)));
+                        var success = t.Result;
+                        if (success)
+                            browser.Navigate(new Uri(String.Format("file:///{0}", formatter.OutputFile)));
+                        else
+                        {
+                            var msg = WrapMessageInHtml("The evaluation timed out...");
+                            browser.NavigateToString(msg);
+                        }
                     }
                     else
                     {
-                        var msg = String.Format(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.01 Transitional//EN"" ""http://www.w3.org/TR/html4/loose.dtd"">
-<html><head><title>Error</title></head><body>{0}</body></html>",
-                            String.Concat(DumpException(t.Exception)));
+                        var msg = WrapMessageInHtml(String.Concat(DumpException(t.Exception)));
                         browser.NavigateToString(msg);
                    }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
@@ -73,7 +83,7 @@ namespace Microsoft.MDComment
         {
             if (sourceFile == Document.FullName)
             {
-                UpdateMarkdown();
+                UpdateMarkdown(sourceFile);
             }
         }
 
@@ -88,7 +98,11 @@ namespace Microsoft.MDComment
             if (activated != null && sourceFile != activated.FullName && HasFSharpExtension(activated.Name))
             {
                 sourceFile = activated.FullName;
-                UpdateMarkdown();
+                UpdateMarkdown(sourceFile);
+            }
+            else
+            {
+                UpdateMarkdown(formatter.WelcomeFile);
             }
         }
     }

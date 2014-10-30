@@ -22,8 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Debug\MDFormatter.XML</DocumentationFile>
-    <OtherFlags>
-    </OtherFlags>
+    <OtherFlags>--keyfile:..\MDComment\Key.snk</OtherFlags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,52 +32,47 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Release\MDFormatter.XML</DocumentationFile>
+    <OtherFlags>--keyfile:..\MDComment\Key.snk</OtherFlags>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CSharpFormat">
-      <HintPath>..\packages\FSharp.Formatting.2.4.26\lib\net40\CSharpFormat.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\signed_lib\CSharpFormat.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.CodeFormat">
-      <HintPath>..\packages\FSharp.Formatting.2.4.26\lib\net40\FSharp.CodeFormat.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\signed_lib\FSharp.CodeFormat.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Compiler.Service">
-      <HintPath>..\packages\FSharp.Compiler.Service.0.0.59\lib\net45\FSharp.Compiler.Service.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\signed_lib\FSharp.Compiler.Service.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Literate">
-      <HintPath>..\packages\FSharp.Formatting.2.4.26\lib\net40\FSharp.Literate.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\signed_lib\FSharp.Literate.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Markdown">
-      <HintPath>..\packages\FSharp.Formatting.2.4.26\lib\net40\FSharp.Markdown.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\signed_lib\FSharp.Markdown.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.MetadataFormat">
-      <HintPath>..\packages\FSharp.Formatting.2.4.26\lib\net40\FSharp.MetadataFormat.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\signed_lib\FSharp.MetadataFormat.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
     <Reference Include="RazorEngine">
-      <HintPath>..\packages\RazorEngine.3.3.0\lib\net40\RazorEngine.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\signed_lib\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web.Razor">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\signed_lib\System.Web.Razor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Formatter.fs" />
     <None Include="Script.fsx" />
-    <None Include="packages.config" />
+    <None Include="Welcome.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
