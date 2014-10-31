@@ -70,7 +70,7 @@
   <ItemGroup>
     <Compile Include="Formatter.fs" />
     <None Include="Script.fsx" />
-    <None Include="Welcome.md">
+    <None Include="README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

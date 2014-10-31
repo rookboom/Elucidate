@@ -87,22 +87,13 @@ namespace Microsoft.MDComment
             }
         }
 
-        private bool HasFSharpExtension(string filename)
-        {
-            return filename.EndsWith(".fs") || filename.EndsWith(".fsx");
-        }
-
         private void OnWindowActivated(EnvDTE.Window GotFocus, EnvDTE.Window LostFocus)
         {
             var activated = dte.ActiveDocument;
-            if (activated != null && sourceFile != activated.FullName && HasFSharpExtension(activated.Name))
+            if (activated != null && sourceFile != activated.FullName && formatter.IsSupported(activated.Name))
             {
                 sourceFile = activated.FullName;
                 UpdateMarkdown(sourceFile);
-            }
-            else
-            {
-                UpdateMarkdown(formatter.WelcomeFile);
             }
         }
     }
