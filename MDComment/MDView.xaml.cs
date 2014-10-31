@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Microsoft.MDComment
 {
@@ -30,7 +31,8 @@ namespace Microsoft.MDComment
         DTE2 dte;
         Events events;
         DocumentEvents docEvents;
-        string sourceFile;
+        string sourceFile = "";
+        int lastScrollHeight = 0;
         MDFormatter formatter = new MDFormatter();
         public MDView()
         {
@@ -40,6 +42,13 @@ namespace Microsoft.MDComment
             docEvents = events.DocumentEvents;
             dte.Events.WindowEvents.WindowActivated += OnWindowActivated;
             docEvents.DocumentSaved += OnDocumentSaved;
+            browser.LoadCompleted += OnBrowserLoadCompleted;
+            UpdateMarkdown("");
+        }
+
+        private void OnBrowserLoadCompleted(object sender, NavigationEventArgs e)
+        {
+            SetBrowserScrollHeight(lastScrollHeight);
         }
 
         IEnumerable<string> DumpException(Exception e)
@@ -55,6 +64,26 @@ namespace Microsoft.MDComment
 <html><head><title>Elucidate Error</title></head><body><b>Error:</b> {0}</body></html>", msg);
         }
 
+        int GetBrowserScrollHeight()
+        {
+            var htmlDoc = browser.Document as mshtml.HTMLDocument;
+            if (htmlDoc != null)
+            {
+                var tags = htmlDoc.getElementsByTagName("HTML");
+                return (tags.length > 0) ? tags.item(0).ScrollTop : 0;
+            }
+            return 0;
+        }
+
+        void SetBrowserScrollHeight(int height)
+        {
+            var htmlDoc = browser.Document as mshtml.HTMLDocument;
+            if (htmlDoc != null)
+            {
+                htmlDoc.parentWindow.scrollTo(0, height);
+            }
+        }
+
         Task UpdateMarkdown(string sourceFile)
         {
             return formatter.Format(sourceFile)
@@ -64,7 +93,10 @@ namespace Microsoft.MDComment
                     {
                         var success = t.Result;
                         if (success)
+                        {
+                            lastScrollHeight = GetBrowserScrollHeight();
                             browser.Navigate(new Uri(String.Format("file:///{0}", formatter.OutputFile)));
+                        }
                         else
                         {
                             var msg = WrapMessageInHtml("The evaluation timed out...");
@@ -92,6 +124,7 @@ namespace Microsoft.MDComment
             var activated = dte.ActiveDocument;
             if (activated != null && sourceFile != activated.FullName && formatter.IsSupported(activated.Name))
             {
+                SetBrowserScrollHeight(0);
                 sourceFile = activated.FullName;
                 UpdateMarkdown(sourceFile);
             }
