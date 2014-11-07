@@ -34,6 +34,9 @@ namespace Microsoft.MDComment
         string sourceFile = "";
         int lastScrollHeight = 0;
         MDFormatter formatter = new MDFormatter();
+        CancellationToken cancelFormattingTask = new CancellationToken();
+        Task currentFormattingTask;
+
         public MDView()
         {
             InitializeComponent();
@@ -44,11 +47,23 @@ namespace Microsoft.MDComment
             docEvents.DocumentSaved += OnDocumentSaved;
             browser.LoadCompleted += OnBrowserLoadCompleted;
             UpdateMarkdown("");
+            Unloaded += (s,  o) => formatter.Dispose();
+        }
+
+        
+        private void SetButtonState(Button button, bool  enabled)
+        {
+            button.IsEnabled = enabled;
+            button.Opacity = enabled ? 1.0 : 0.5;
         }
 
         private void OnBrowserLoadCompleted(object sender, NavigationEventArgs e)
         {
             SetBrowserScrollHeight(lastScrollHeight);
+            // Don't allow going back to the previously local generated webpage file.
+            // Back is only supported after navigating to a web url.
+            SetButtonState(browseBackButton,browser.CanGoBack);
+            SetButtonState(browseForwardButton, browser.CanGoForward);
         }
 
         IEnumerable<string> DumpException(Exception e)
@@ -84,30 +99,31 @@ namespace Microsoft.MDComment
             }
         }
 
-        Task UpdateMarkdown(string sourceFile)
+        void UpdateMarkdown(string sourceFile)
         {
-            return formatter.Format(sourceFile)
+            if (currentFormattingTask != null && currentFormattingTask.Status == TaskStatus.Running)
+            {
+                // Ignore. We only allow one update at a time.
+                return;
+            }
+            busyIndicator.IsBusy = true;
+            currentFormattingTask = Task.Factory.StartNew(() => formatter.Format(sourceFile), cancelFormattingTask)
                 .ContinueWith(t =>
                 {
+                    var outputFile = "";
                     if (t.Exception == null)
                     {
-                        var success = t.Result;
-                        if (success)
-                        {
-                            lastScrollHeight = GetBrowserScrollHeight();
-                            browser.Navigate(new Uri(String.Format("file:///{0}", formatter.OutputFile)));
-                        }
-                        else
-                        {
-                            var msg = WrapMessageInHtml("The evaluation timed out...");
-                            browser.NavigateToString(msg);
-                        }
+                        outputFile = t.Result;
+                        lastScrollHeight = GetBrowserScrollHeight();
+                        browser.Navigate(new Uri(String.Format("file:///{0}", outputFile)));
                     }
                     else
                     {
                         var msg = WrapMessageInHtml(String.Concat(DumpException(t.Exception)));
                         browser.NavigateToString(msg);
                    }
+                    busyIndicator.IsBusy = false;
+                    return outputFile;
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
          
@@ -128,6 +144,18 @@ namespace Microsoft.MDComment
                 sourceFile = activated.FullName;
                 UpdateMarkdown(sourceFile);
             }
+        }
+
+        void BrowseBack_Executed(object sender, RoutedEventArgs args)
+        {
+            if (browser.CanGoBack)
+                browser.GoBack();
+        }
+        
+        void BrowseForward_Executed(object sender, RoutedEventArgs args)
+        {
+            if (browser.CanGoForward)
+                browser.GoForward();
         }
     }
 }

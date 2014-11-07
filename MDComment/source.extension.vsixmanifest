@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="f547e7eb-fa9f-4284-90c9-fab2bd1fa0be" Version="1.0" Language="en-US" Publisher="Microsoft" />
+    <Identity Id="f547e7eb-fa9f-4284-90c9-fab2bd1fa0be" Version="1.0.1" Language="en-US" Publisher="Johan Verwey" />
     <DisplayName>Elucidate</DisplayName>
     <Description xml:space="preserve">Alternative reading mode that renders markdown interspersed in code. Credits to Tomas Petricek's Literate Programming tools.
 http://tpetricek.github.io/FSharp.Formatting/literate.html</Description>

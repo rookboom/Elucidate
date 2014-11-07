@@ -3,10 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow" Foreground="#FFC8C8C8" Background="#FF222222">
-    <Grid Background="#FF222222">
-        <WebBrowser Name="browser"/>
+    <Grid Background="#FF222222" Name="grid">
+        <DockPanel LastChildFill="False">                    
+
+            <ToolBarTray Height="40" DockPanel.Dock="Top">
+                <ToolBar>
+                    <Button Name="browseBackButton" Click="BrowseBack_Executed" DockPanel.Dock="Top">
+                        <Image Source="Resources/arrow_back.png" Width="32" Height="32" />
+                    </Button>
+                    <Button Name="browseForwardButton" Click="BrowseForward_Executed" DockPanel.Dock="Top">
+                        <Image Source="Resources/arrow_forward.png" Width="32" Height="32" />
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
+
+            <WebBrowser Name="browser"/>
+            
+        </DockPanel>
+        <xctk:BusyIndicator Name="busyIndicator" IsBusy="False" DisplayAfter="0" >
+        </xctk:BusyIndicator>
     </Grid>
 </UserControl>
