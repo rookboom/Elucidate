@@ -47,7 +47,7 @@ namespace Microsoft.MDComment
             docEvents.DocumentSaved += OnDocumentSaved;
             browser.LoadCompleted += OnBrowserLoadCompleted;
             UpdateMarkdown("");
-            Unloaded += (s,  o) => formatter.Dispose();
+            Unloaded += (s,  o) => (formatter as IDisposable).Dispose();
         }
 
         

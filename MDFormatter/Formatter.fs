@@ -100,6 +100,7 @@ businness  is fragile._**
 *)
     interface IDisposable  with
         member m.Dispose() =
-            File.Delete(outputFile)
+            if File.Exists(outputFile) then
+                File.Delete(outputFile)
 
 
