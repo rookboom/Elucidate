@@ -19,4 +19,5 @@ Elucidate was inspired by Donald Knuth's *literate programming*. Although it fal
 	As such, updating the generated HTML takes slower than I would like. Hopefully this can be improved upon in the future. 
 	For now this is what we have.
 - F# Literal Evaluation syntax is not supported yet.
+- The dark theme is currently the default. Mostly because I don't know the first thing about CSS. If you have a better understanding of this, you can edit the stylesheet in the plugin installation folder.
 
