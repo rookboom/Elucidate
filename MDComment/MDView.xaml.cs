@@ -157,5 +157,51 @@ namespace Microsoft.MDComment
             if (browser.CanGoForward)
                 browser.GoForward();
         }
+
+        void ZoomIn_Executed(object sender, RoutedEventArgs args)
+        {
+            SetZoom(1.1);
+        }
+        void ZoomOut_Executed(object sender, RoutedEventArgs args)
+        {
+            SetZoom(0.9);
+        }
+
+        private double currentZoom = 1.0;
+        private void SetZoom(double zoom)
+        {
+            if ((currentZoom < 0.1 && zoom < 1.0) || (currentZoom > 4 && zoom > 1.0))
+            {
+                return;
+            }
+
+            currentZoom = currentZoom * zoom;                
+
+            var doc = browser.Document as mshtml.IHTMLDocument2;
+            if (doc == null) return;
+            doc.parentWindow.execScript("document.body.style.zoom=" + currentZoom.ToString().Replace(",", ".") + ";");
+        }
+
+        void Swap_bg(object sender, RoutedEventArgs args)
+        {
+            var doc = browser.Document as mshtml.IHTMLDocument2;
+            if (doc != null)
+            {
+                var docstyle = doc.body.style;
+                //Note: Originally doc.body properties are null and the colors comes from style.css body-tag:
+                var toggleDark = docstyle.backgroundColor == "#ffffff" || docstyle.backgroundColor == "transparent";
+                if (toggleDark)
+                {
+                    docstyle.backgroundColor = "#222222";
+                    docstyle.color = "#cccccc";
+                }
+                else
+                {
+                    docstyle.backgroundColor = "#ffffff";
+                    docstyle.color = "#000000";
+                }
+            }
+        }
+
     }
 }

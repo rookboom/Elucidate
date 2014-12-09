@@ -18,6 +18,15 @@
                     <Button Name="browseForwardButton" Click="BrowseForward_Executed" DockPanel.Dock="Top">
                         <Image Source="Resources/arrow_forward.png" Width="32" Height="32" />
                     </Button>
+                    <Button Name="zoomInButton" Click="ZoomIn_Executed" DockPanel.Dock="Top">
+                        <Image Source="Resources/zoom_in.png" Width="32" Height="32" />
+                    </Button>
+                    <Button Name="zoomOutButton" Click="ZoomOut_Executed" DockPanel.Dock="Top">
+                        <Image Source="Resources/zoom_out.png" Width="32" Height="32" />
+                    </Button>
+                    <Button Name="swapColorsButton" Click="Swap_bg" DockPanel.Dock="Top">
+                        <Image Source="Resources/swap_colors.png" Width="32" Height="32" />
+                    </Button>
                 </ToolBar>
             </ToolBarTray>
 
