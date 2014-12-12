@@ -30,6 +30,7 @@ namespace Microsoft.MDComment
     {
         DTE2 dte;
         Events events;
+        ColorableItems colorableItems;
         DocumentEvents docEvents;
         string sourceFile = "";
         int lastScrollHeight = 0;
@@ -46,6 +47,9 @@ namespace Microsoft.MDComment
             dte.Events.WindowEvents.WindowActivated += OnWindowActivated;
             docEvents.DocumentSaved += OnDocumentSaved;
             browser.LoadCompleted += OnBrowserLoadCompleted;
+            var properties = dte.get_Properties("FontsAndColors", "TextEditor");
+            var fontsAndColorsItems = (EnvDTE.FontsAndColorsItems)properties.Item("FontsAndColorsItems").Object;
+            colorableItems = fontsAndColorsItems.Item("Plain Text") as ColorableItems;
             UpdateMarkdown("");
             Unloaded += (s,  o) => (formatter as IDisposable).Dispose();
         }
@@ -57,6 +61,10 @@ namespace Microsoft.MDComment
             button.Opacity = enabled ? 1.0 : 0.5;
         }
 
+        string GetColorString(uint colorKey)
+        {
+            return String.Format("#{0:X6}", colorKey);
+        }
         private void OnBrowserLoadCompleted(object sender, NavigationEventArgs e)
         {
             SetBrowserScrollHeight(lastScrollHeight);
@@ -64,6 +72,14 @@ namespace Microsoft.MDComment
             // Back is only supported after navigating to a web url.
             SetButtonState(browseBackButton,browser.CanGoBack);
             SetButtonState(browseForwardButton, browser.CanGoForward);
+
+            var doc = browser.Document as mshtml.IHTMLDocument2;
+            if (doc.body != null)
+            {
+                var style = doc.body.style;
+                style.backgroundColor = GetColorString(colorableItems.Background);
+                style.color = GetColorString(colorableItems.Foreground);
+            }
         }
 
         IEnumerable<string> DumpException(Exception e)
@@ -123,6 +139,8 @@ namespace Microsoft.MDComment
                         browser.NavigateToString(msg);
                    }
                     busyIndicator.IsBusy = false;
+
+
                     return outputFile;
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -180,27 +198,6 @@ namespace Microsoft.MDComment
             var doc = browser.Document as mshtml.IHTMLDocument2;
             if (doc == null) return;
             doc.parentWindow.execScript("document.body.style.zoom=" + currentZoom.ToString().Replace(",", ".") + ";");
-        }
-
-        void Swap_bg(object sender, RoutedEventArgs args)
-        {
-            var doc = browser.Document as mshtml.IHTMLDocument2;
-            if (doc != null)
-            {
-                var docstyle = doc.body.style;
-                //Note: Originally doc.body properties are null and the colors comes from style.css body-tag:
-                var toggleDark = docstyle.backgroundColor == "#ffffff" || docstyle.backgroundColor == "transparent";
-                if (toggleDark)
-                {
-                    docstyle.backgroundColor = "#222222";
-                    docstyle.color = "#cccccc";
-                }
-                else
-                {
-                    docstyle.backgroundColor = "#ffffff";
-                    docstyle.color = "#000000";
-                }
-            }
         }
 
     }
