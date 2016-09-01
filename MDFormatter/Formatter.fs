@@ -81,16 +81,16 @@ The resulting html is stored in **OutputFile**
             match getExtensionLower file with
             |".fs" ->  processCode output
             |".fsx" -> processScript output
-            |".md" ->  processMarkdown output
+            |".md" |".markdown" ->  processMarkdown output
             | _ -> processUnknown output
             output
 
 
-(** Only *.fs*, *.fsx* and *.md* files are supported *)
+(** Only *.fs*, *.fsx* and *.md*|*.markdown* files are supported *)
     member m.IsSupported(file) = 
         //ignore case
         match getExtensionLower file with
-        | ".fs" | ".fsx" | ".md" -> true | _ -> false
+        | ".fs" | ".fsx" | ".md" | ".markdown" -> true | _ -> false
 
 (** 
 #Disposing
